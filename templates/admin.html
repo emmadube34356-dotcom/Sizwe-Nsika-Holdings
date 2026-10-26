@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 style="color: var(--primary-navy);">Admin Dashboard</h2>
+    <p>Logged in as Administrator. Update service prices, transport rates, and business information live[cite: 15].</p>
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="{{ url_for('logout') }}" style="color: red; font-weight: bold;">Logout</a>
+    </div>
+
+    <!-- Edit Business Details -->
+    <div class="quote-box" style="max-width: 100%; margin-bottom: 40px;">
+        <h3>Update Business Details</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="update_business">
+            <div class="grid-3">
+                <div class="form-group"><label>Business Name</label><input type="text" name="name" value="{{ biz.name }}"></div>
+                <div class="form-group"><label>Tagline</label><input type="text" name="tagline" value="{{ biz.tagline }}"></div>
+                <div class="form-group"><label>Phone Number</label><input type="text" name="phone" value="{{ biz.phone }}"></div>
+                <div class="form-group"><label>WhatsApp Number</label><input type="text" name="whatsapp" value="{{ biz.whatsapp }}"></div>
+                <div class="form-group"><label>Email Address</label><input type="text" name="email" value="{{ biz.email }}"></div>
+                <div class="form-group"><label>Region</label><input type="text" name="region" value="{{ biz.region }}"></div>
+            </div>
+            <button type="submit" class="btn-primary" style="border:none;">Save Business Info</button>
+        </form>
+    </div>
+
+    <!-- Edit Transport Fees -->
+    <div class="quote-box" style="max-width: 100%; margin-bottom: 40px;">
+        <h3>Update Transport Rates</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="update_transport">
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Base Transport Fee (R)</label>
+                    <input type="number" step="0.1" name="base_transport_fee" value="{{ transport.base_transport_fee }}">
+                </div>
+                <div class="form-group">
+                    <label>Rate per Kilometer (R/km)</label>
+                    <input type="number" step="0.1" name="rate_per_km" value="{{ transport.rate_per_km }}">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="border:none;">Save Transport Rates</button>
+        </form>
+    </div>
+
+    <!-- Edit Service Rates -->
+    <div class="quote-box" style="max-width: 100%;">
+        <h3>Update Service Pricing Parameters</h3>
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #ccc; text-align: left;">
+                    <th>Service Name</th>
+                    <th>Base Price (R)</th>
+                    <th>Rate per Sqm (R/m²)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for svc in services %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <form method="POST">
+                        <input type="hidden" name="action" value="update_pricing">
+                        <input type="hidden" name="service_key" value="{{ svc.service_key }}">
+                        <td style="padding: 10px;">{{ svc.service_name }}</td>
+                        <td><input type="number" step="0.1" name="base_price" value="{{ svc.base_price }}"></td>
+                        <td><input type="number" step="0.1" name="rate_per_sqm" value="{{ svc.rate_per_sqm }}"></td>
+                        <td><button type="submit" class="btn-primary" style="padding: 5px 10px; border:none;">Update</button></td>
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

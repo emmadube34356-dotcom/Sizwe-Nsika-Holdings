@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+    <h1>PROFESSIONAL CONSTRUCTION & MAINTENANCE SERVICES</h1>
+    <h3>ACROSS SOUTH AFRICA & THE SADC REGION</h3>
+    <p>{{ biz.tagline }}</p>
+    <a href="{{ url_for('quote') }}" class="btn-primary"><i class="fas fa-calculator"></i> Calculate Instant Quotation</a>
+    <a href="https://wa.me/{{ biz.whatsapp }}" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+</section>
+
+<div class="container">
+    <h2 style="text-align: center; color: var(--primary-navy);">Why Choose Us?</h2>
+    <div class="grid-3">
+        <div class="card"><i class="fas fa-shield-alt"></i><h3>Quality Workmanship</h3><p>Built to last with top quality materials.</p></div>
+        <div class="card"><i class="fas fa-user-check"></i><h3>Professional Service</h3><p>Trusted solutions across South Africa and SADC.</p></div>
+        <div class="card"><i class="fas fa-tags"></i><h3>Affordable Pricing</h3><p>Transparent pricing and automated quotes.</p></div>
+    </div>
+</div>
+{% endblock %}

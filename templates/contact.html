@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Contact Us | {{ biz.name }}{% endblock %}
+{% block content %}
+<div class="page-banner">
+    <h1>Contact Us</h1>
+    <p>We are ready to assist you with your next project</p>
+</div>
+
+<div class="container">
+    <div class="grid-2">
+        <div class="card">
+            <i class="fas fa-headset"></i>
+            <h3>Get In Touch</h3>
+            <p><strong>Phone / WhatsApp:</strong> {{ biz.phone }}</p>
+            <p><strong>Email:</strong> {{ biz.email }}</p>
+            <p><strong>Region:</strong> {{ biz.region }}</p>
+        </div>
+        <div class="form-card">
+            <h3>Send Us a Message</h3>
+            <form method="POST">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Submit Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
