@@ -10,11 +10,6 @@
 <body>
 
     <header>
-        <div class="top-bar">
-            <span><i class="fas fa-map-marker-alt"></i> {{ biz.region }}</span>
-            <span><i class="fas fa-envelope"></i> {{ biz.email }}</span>
-            <span><i class="fab fa-whatsapp"></i> {{ biz.phone }}</span>
-        </div>
         <nav class="navbar">
             <a href="{{ url_for('home') }}" class="brand-link">
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Sizwe Nsika Logo" class="site-logo" onerror="this.style.display='none'; document.getElementById('brand-fallback').style.display='flex';">
@@ -27,6 +22,7 @@
                 </div>
             </a>
 
+            <!-- Mobile Menu Toggle Button -->
             <button class="menu-toggle" id="mobile-menu-btn" onclick="toggleMenu()">
                 <i class="fas fa-bars"></i>
             </button>
@@ -63,13 +59,24 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Footer with location, email, and contact info at the bottom -->
     <footer>
-        <div class="footer-brand">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Sizwe Nsika Logo" class="footer-logo" onerror="this.style.display='none';">
-            <h3>{{ biz.name }}</h3>
-            <p>{{ biz.tagline }}</p>
+        <div class="footer-content" style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 15px; text-align: center;">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Sizwe Nsika Logo" class="footer-logo" onerror="this.style.display='none';">
+                <h3 style="margin: 8px 0 3px 0; color: white;">{{ biz.name }}</h3>
+                <p style="margin: 0; color: #adb5bd; font-size: 0.9rem;">{{ biz.tagline }}</p>
+            </div>
+
+            <div class="footer-contact-info" style="display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-top: 8px; font-size: 0.95rem;">
+                <span><i class="fas fa-map-marker-alt" style="color: #4da3ff;"></i> {{ biz.region }}</span>
+                <span><i class="fas fa-envelope" style="color: #4da3ff;"></i> {{ biz.email }}</span>
+                <span><i class="fab fa-whatsapp" style="color: #25d366;"></i> {{ biz.phone }}</span>
+            </div>
         </div>
-        <p class="copyright">&copy; 2026 {{ biz.name }}. All Rights Reserved. | {{ biz.region }}</p>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); width: 100%; margin: 15px 0;">
+        <p class="copyright" style="text-align: center; margin: 0; font-size: 0.85rem; color: #adb5bd;">&copy; 2026 {{ biz.name }}. All Rights Reserved.</p>
     </footer>
 
     <script>
