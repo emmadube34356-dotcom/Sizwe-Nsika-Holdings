@@ -74,3 +74,92 @@
     </div>
 </div>
 {% endblock %}
+@app.route('/quote', methods=['GET', 'POST'])
+def quote():
+    db = get_db()
+    services_list = db.execute('SELECT * FROM pricing_config').fetchall()
+    transport = db.execute('SELECT * FROM transport_config WHERE id = 1').fetchone()
+
+    quote_result = None
+    if request.method == 'POST':
+        service_key = request.form.get('service')
+        height_cm = float(request.form.get('height', 0))
+        width_cm = float(request.form.get('width', 0))
+        distance_km = float(request.form.get('distance', 0))
+
+        area_sqm = (height_cm / 100.0) * (width_cm / 100.0)
+        svc = db.execute('SELECT * FROM pricing_config WHERE service_key = ?', (service_key,)).fetchone()
+
+        if svc:
+            material_cost = svc['base_price'] + (area_sqm * svc['rate_per_sqm'])
+            transport_cost = transport['base_transport_fee'] + (distance_km * transport['rate_per_km'])
+            total_est = material_cost + transport_cost
+
+            # Save quotation to database for admin review
+            db.execute('''
+                INSERT INTO quotations (service_name, height_cm, width_cm, area_sqm, distance_km, total_est)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (svc['service_name'], height_cm, width_cm, round(area_sqm, 2), distance_km, round(total_est, 2)))
+            db.commit()
+
+            quote_result = {
+                'service_name': svc['service_name'],
+                'height_cm': height_cm,
+                'width_cm': width_cm,
+                'area_sqm': round(area_sqm, 2),
+                'distance_km': distance_km,
+                'material_cost': round(material_cost, 2),
+                'transport_cost': round(transport_cost, 2),
+                'total_est': round(total_est, 2)
+            }
+
+    return render_template('quote.html', services=services_list, quote=quote_result)
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+
+    db = get_db()
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'update_business':
+            db.execute('''
+                UPDATE business_info
+                SET name=?, tagline=?, phone=?, whatsapp=?, email=?, region=?
+                WHERE id=1
+            ''', (
+                request.form.get('name'), request.form.get('tagline'),
+                request.form.get('phone'), request.form.get('whatsapp'),
+                request.form.get('email'), request.form.get('region')
+            ))
+            db.commit()
+            flash('Business settings updated!', 'success')
+
+        elif action == 'update_pricing':
+            service_key = request.form.get('service_key')
+            base_price = float(request.form.get('base_price', 0))
+            rate_per_sqm = float(request.form.get('rate_per_sqm', 0))
+            db.execute('''
+                UPDATE pricing_config SET base_price=?, rate_per_sqm=? WHERE service_key=?
+            ''', (base_price, rate_per_sqm, service_key))
+            db.commit()
+            flash('Service pricing updated!', 'success')
+
+        elif action == 'update_transport':
+            base_fee = float(request.form.get('base_transport_fee', 0))
+            rate_km = float(request.form.get('rate_per_km', 0))
+            db.execute('''
+                UPDATE transport_config SET base_transport_fee=?, rate_per_km=? WHERE id=1
+            ''', (base_fee, rate_km))
+            db.commit()
+            flash('Transport rates updated!', 'success')
+
+    services_list = db.execute('SELECT * FROM pricing_config').fetchall()
+    transport = db.execute('SELECT * FROM transport_config WHERE id = 1').fetchone()
+    biz = db.execute('SELECT * FROM business_info WHERE id = 1').fetchone()
+
+    # Fetch quotations made on the day / all recent quotations
+    quotations_list = db.execute('SELECT * FROM quotations ORDER BY created_at DESC LIMIT 50').fetchall()
+
+    return render_template('admin.html', services=services_list, transport=transport, biz=biz, quotations=quotations_list)

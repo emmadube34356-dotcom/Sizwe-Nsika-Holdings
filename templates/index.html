@@ -1,19 +1,33 @@
 {% extends "base.html" %}
+{% block title %}Home | {{ biz.name }}{% endblock %}
+
 {% block content %}
-<section class="hero">
-    <h1>PROFESSIONAL CONSTRUCTION & MAINTENANCE SERVICES</h1>
-    <h3>ACROSS SOUTH AFRICA & THE SADC REGION</h3>
-    <p>{{ biz.tagline }}</p>
-    <a href="{{ url_for('quote') }}" class="btn-primary"><i class="fas fa-calculator"></i> Calculate Instant Quotation</a>
-    <a href="https://wa.me/{{ biz.whatsapp }}" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
-</section>
+<div class="page-banner" style="padding: 60px 20px; text-align: center;">
+    <h1>PROFESSIONAL CONSTRUCTION & MAINTENANCE</h1>
+    <p>Building Tomorrow Together Across South Africa & SADC Region[cite: 15]</p>
+    <div style="margin-top: 25px;">
+        <a href="{{ url_for('quote') }}" class="btn-nav" style="padding: 12px 25px; font-size: 1.1rem; display: inline-block;"><i class="fas fa-calculator"></i> Calculate Instant Quotation</a>
+    </div>
+</div>
 
 <div class="container">
-    <h2 style="text-align: center; color: var(--primary-navy);">Why Choose Us?</h2>
+    <h2 style="text-align: center; color: var(--primary-navy); margin-bottom: 30px;">Why Choose Us?</h2>
     <div class="grid-3">
-        <div class="card"><i class="fas fa-shield-alt"></i><h3>Quality Workmanship</h3><p>Built to last with top quality materials.</p></div>
-        <div class="card"><i class="fas fa-user-check"></i><h3>Professional Service</h3><p>Trusted solutions across South Africa and SADC.</p></div>
-        <div class="card"><i class="fas fa-tags"></i><h3>Affordable Pricing</h3><p>Transparent pricing and automated quotes.</p></div>
+        <div class="card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Quality Workmanship</h3>
+            <p>Delivering top-tier building, renovation, and structural installations[cite: 15].</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-truck-moving"></i>
+            <h3>SADC Regional Reach</h3>
+            <p>Reliable transport and service delivery across borders.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-bolt"></i>
+            <h3>Instant Quotations</h3>
+            <p>Transparent pricing calculated instantly online for your convenience.</p>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -82,6 +82,34 @@ def init_db():
                        )
                        ''')
 
+        # Quotations history table
+        cursor.execute('''
+                       CREATE TABLE IF NOT EXISTS quotations
+                       (
+                           id
+                           INTEGER
+                           PRIMARY
+                           KEY
+                           AUTOINCREMENT,
+                           service_name
+                           TEXT,
+                           height_cm
+                           REAL,
+                           width_cm
+                           REAL,
+                           area_sqm
+                           REAL,
+                           distance_km
+                           REAL,
+                           total_est
+                           REAL,
+                           created_at
+                           TIMESTAMP
+                           DEFAULT
+                           CURRENT_TIMESTAMP
+                       )
+                       ''')
+
         # Insert defaults if empty
         cursor.execute('SELECT COUNT(*) FROM business_info')
         if cursor.fetchone()[0] == 0:
@@ -176,6 +204,14 @@ def quote():
             transport_cost = transport['base_transport_fee'] + (distance_km * transport['rate_per_km'])
             total_est = material_cost + transport_cost
 
+            # Save quotation to database for admin review
+            db.execute('''
+                       INSERT INTO quotations (service_name, height_cm, width_cm, area_sqm, distance_km, total_est)
+                       VALUES (?, ?, ?, ?, ?, ?)
+                       ''',
+                       (svc['service_name'], height_cm, width_cm, round(area_sqm, 2), distance_km, round(total_est, 2)))
+            db.commit()
+
             quote_result = {
                 'service_name': svc['service_name'],
                 'height_cm': height_cm,
@@ -266,8 +302,10 @@ def admin():
     services_list = db.execute('SELECT * FROM pricing_config').fetchall()
     transport = db.execute('SELECT * FROM transport_config WHERE id = 1').fetchone()
     biz = db.execute('SELECT * FROM business_info WHERE id = 1').fetchone()
+    quotations_list = db.execute('SELECT * FROM quotations ORDER BY created_at DESC LIMIT 50').fetchall()
 
-    return render_template('admin.html', services=services_list, transport=transport, biz=biz)
+    return render_template('admin.html', services=services_list, transport=transport, biz=biz,
+                           quotations=quotations_list)
 
 
 if __name__ == '__main__':
@@ -275,5 +313,4 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
     if __name__ == '__main__':
         init_db()
-        port = int(os.environ.get('PORT', 5000))
-        app.run(host='0.0.0.0', port=port, debug=False)
+        app.run(host='0.0.0.0', port=5000, debug=True)
